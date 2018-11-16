@@ -21,6 +21,8 @@ The algorithm is highly efficient, and has been used in these papers:
 This library is also available at MathWorks:
 * https://www.mathworks.com/matlabcentral/fileexchange/39110-decision-tree-and-decision-forest
 
+![picture](resources/decision_forest.png)
+
 ## Copyright
 
 Copyright (C) 2013 Quan Wang <wangq10@rpi.edu>,
