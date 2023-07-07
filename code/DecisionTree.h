@@ -410,7 +410,6 @@ void Tree::trainTreeNode(long n, List *list, Data *data)
 
 	map->add(n,new TreeNode(bestNode->feature,bestNode->threshold,nol));
 
-    delete[] candidates;
     delete[] entropyDecrease;
     
     // generate lists for children
@@ -433,9 +432,12 @@ void Tree::trainTreeNode(long n, List *list, Data *data)
 			rightList->num++;
 		}
 	}
+    
+    // only delete candidates after bestNode is not used
+    delete[] candidates;
 
     // recursive call
-	trainTreeNode(leftChild(n),leftList,data);
+    trainTreeNode(leftChild(n),leftList,data);
     delete leftList;
     
 	trainTreeNode(rightChild(n),rightList,data);
