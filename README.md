@@ -1,9 +1,9 @@
-# Decision Tree and Decision Forest [![View Decision Tree and Decision Forest on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/39110-decision-tree-and-decision-forest)
+# Decision Tree and Decision Forest [![View Decision Tree and Decision Forest on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/39110-decision-tree-and-decision-forest) [![Octave application](https://github.com/wq2012/DecisionForest/actions/workflows/octave.yml/badge.svg)](https://github.com/wq2012/DecisionForest/actions/workflows/octave.yml)
 
 ## Overview
 
 This package implements the decision tree and decision forest techniques in C++,
-and can be compiled with MEX and called by MATLAB.
+and can be compiled with MEX and called by MATLAB/Octave.
 The algorithm is highly efficient, and has been used in these papers:
 
 ```
@@ -18,7 +18,7 @@ The algorithm is highly efficient, and has been used in these papers:
     MICCAI 2013: Workshop on Medical Computer Vision.
 ```
 
-This library is also available at MathWorks:
+This library is also available at MathWorks MATLAB Central:
 * https://www.mathworks.com/matlabcentral/fileexchange/39110-decision-tree-and-decision-forest
 
 ![picture](resources/decision_forest.png)
