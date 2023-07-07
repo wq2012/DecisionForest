@@ -45,8 +45,6 @@
 #include <iostream>
 #include "HashTable.h"
 
-using namespace std;
-
 /**********************************************
  * Declaration part
  **********************************************/
@@ -160,7 +158,7 @@ Data::Data(double *X_, int *Y_, long n_, long d_)
     {
         if (Y[i] < 1)
         {
-            cout << "Error: entries of Y should be between 1 and nol. \n";
+            std::cout << "Error: entries of Y should be between 1 and nol. \n";
             exit(1);
         }
 
@@ -171,7 +169,7 @@ Data::Data(double *X_, int *Y_, long n_, long d_)
 
         if (nol == 0)
         {
-            cout << "Error: entries of Y should be between 1 and nol. \n";
+            std::cout << "Error: entries of Y should be between 1 and nol. \n";
             exit(1);
         }
     }
@@ -248,7 +246,7 @@ Tree::Tree(char *path)
     pFile = fopen(path, "r");
     if (pFile == NULL)
     {
-        cout << "Error opening " << path << endl;
+        std::cout << "Error opening " << path << std::endl;
         exit(1);
     }
 
@@ -258,7 +256,7 @@ Tree::Tree(char *path)
     // read information
     if (fgets(line, 200, pFile) == NULL)
     {
-        cerr << "Error reading " << path << endl;
+        std::cerr << "Error reading " << path << std::endl;
     }
     word = strtok(line, "\t\r\n");
     depth = atoi(word); // depth of tree
@@ -275,7 +273,7 @@ Tree::Tree(char *path)
 
         if (fgets(line, 200, pFile) == NULL)
         {
-            cerr << "Error reading " << path << endl;
+            std::cerr << "Error reading " << path << std::endl;
         }
 
         word = strtok(line, "\t\r\n");
@@ -516,7 +514,7 @@ void Tree::saveTree(char *path)
     pFile = fopen(path, "w");
     if (pFile == NULL)
     {
-        cout << "Error opening " << path << endl;
+        std::cout << "Error opening " << path << std::endl;
         exit(1);
     }
 
@@ -579,7 +577,7 @@ void Tree::runDecision(double *X, double *Y, double *P, long n_, long d_)
 {
     if (d != d_)
     {
-        cout << "Error: testing data dimension does not match. \n";
+        std::cout << "Error: testing data dimension does not match. \n";
         exit(1);
     }
 
