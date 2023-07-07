@@ -258,7 +258,10 @@ Tree::Tree(char *path)
 	char * word;
 
     // read information
-	fgets(line , 200 , pFile);
+    if (fgets(line , 200 , pFile) == NULL)
+    {
+        cerr<<"Error reading "<<path<<endl; 
+    }
 	word=strtok(line,"\t\r\n");
 	depth=atoi(word); // depth of tree
     word=strtok(NULL,"\t\r\n");
@@ -272,7 +275,10 @@ Tree::Tree(char *path)
 	{
 		TreeNode *node=new TreeNode(0,0,nol);
         
-        fgets(line, 200, pFile);
+        if (fgets(line, 200, pFile) == NULL)
+        {
+            cerr<<"Error reading "<<path<<endl; 
+        }
 
 		word=strtok(line,"\t\r\n");
         long n=atol(word); // node index
