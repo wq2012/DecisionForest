@@ -183,7 +183,7 @@ Department of Electrical, Computer, and Systems Engineering,
 Rensselaer Polytechnic Institute, Troy, NY 12180, USA
 ```
 
-If you use this software for academic purposes, please cite our papers:
+This software was developed as part of the following research. If you use this software in your research, please cite:
 
 **Plain Text:**
 
