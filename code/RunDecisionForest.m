@@ -1,12 +1,25 @@
-% This is the function to run a decision forest on testing data. 
+function [Y, P] = RunDecisionForest(X, forestPath)
+%RunDecisionForest Runs a decision forest on testing data.
+%
+%   Usage:
+%       [Y, P] = RunDecisionForest(X, forestPath)
+%
+%   Inputs:
+%       X           - n*d matrix, testing data, each row is one instance.
+%       forestPath  - String, the folder path where the forest is saved.
+%
+%   Outputs:
+%       Y           - n*1 vector, decision labels for each instance.
+%       P           - n*nol matrix, probabilities. 
+%                     P(i,j) is the probability that instance i belongs to class j.
+%                     nol is the number of unique labels.
+%
+%   See also TrainDecisionForest, RunDecisionTree, TrainDecisionTree.
 
-function [Y,P]=RunDecisionForest(X,forestPath)
-% X: n*d testing data, each row is one instance
-% forestPath: the folder path where the forest is saved
-% Y: n*1 decision labels, each row is one instance
-% P: n*nol probabilities
-%     nol: the number of unique labels, or number of classes
-%     P(i,j): the probability that instance i belongs to class j
+%   Copyright (C) 2013 Quan Wang <wangq10@rpi.edu>
+%   Signal Analysis and Machine Perception Laboratory
+%   Department of Electrical, Computer, and Systems Engineering
+%   Rensselaer Polytechnic Institute, Troy, NY 12180, USA
 
 treeFiles=dir([forestPath '/*.tree']);
 

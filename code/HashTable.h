@@ -1,4 +1,9 @@
 /**
+ * @file HashTable.h
+ * @brief C++ implementation of the hash table data structure.
+ * @author Quan Wang <wangq10@rpi.edu>
+ * @date 2013
+ * 
  * Copyright (C) 2013 Quan Wang <wangq10@rpi.edu>,
  * Signal Analysis and Machine Perception Laboratory,
  * Department of Electrical, Computer, and Systems Engineering,
@@ -6,13 +11,14 @@
  */
 
 /**
- * This is the C++ implementation of the hash table data structure.
+ * @brief Template class for hash table.
+ * 
  * Implemented functionalities:
- *     1. Add an element with its key (the key is an integer).
- *     2. Check if a key exists.
- *     3. Get an element given its key.
- *     4. Get the size of the hash table.
- *     5. Iterate the hash table.
+ *   1. Add an element with its key (the key is an integer).
+ *   2. Check if a key exists.
+ *   3. Get an element given its key.
+ *   4. Get the size of the hash table.
+ *   5. Iterate the hash table.
  *
  * This implementation is used by the decision tree package, thus we did
  * implement functions such as remove.

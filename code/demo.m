@@ -12,22 +12,22 @@
 % TrainDecisionForest(), and RunDecisionForest(). 
 % Note: if there are M classes, then the labels should be 1, 2, ..., M. 
 
-% Copyright (C) 2013 Quan Wang <wangq10@rpi.edu>,
-% Signal Analysis and Machine Perception Laboratory,
-% Department of Electrical, Computer, and Systems Engineering,
-% Rensselaer Polytechnic Institute, Troy, NY 12180, USA
+%   Copyright (C) 2013 Quan Wang <wangq10@rpi.edu>
+%   Signal Analysis and Machine Perception Laboratory
+%   Department of Electrical, Computer, and Systems Engineering
+%   Rensselaer Polytechnic Institute, Troy, NY 12180, USA
+%
+%   Related publications:
+%   [1] Quan Wang, Yan Ou, A. Agung Julius, Kim L. Boyer and Min Jun Kim, 
+%       "Tracking Tetrahymena Pyriformis Cells using Decision Trees", 
+%       2012 21st International Conference on Pattern Recognition (ICPR), 
+%       Pages 1843-1847, 11-15 Nov. 2012.
+%   [2] Quan Wang, Dijia Wu, Le Lu, Meizhu Liu, Kim L. Boyer, and Shaohua 
+%       Kevin Zhou, "Semantic Context Forests for Learning-Based Knee 
+%       Cartilage Segmentation in 3D MR Images", 
+%       MICCAI 2013: Workshop on Medical Computer Vision. 
 
-% Related publications:
-% [1] Quan Wang, Yan Ou, A. Agung Julius, Kim L. Boyer and Min Jun Kim, 
-%     "Tracking Tetrahymena Pyriformis Cells using Decision Trees", 
-%     2012 21st International Conference on Pattern Recognition (ICPR), 
-%     Pages 1843-1847, 11-15 Nov. 2012.
-% [2] Quan Wang, Dijia Wu, Le Lu, Meizhu Liu, Kim L. Boyer, and Shaohua 
-%     Kevin Zhou, "Semantic Context Forests for Learning-Based Knee 
-%     Cartilage Segmentation in 3D MR Images", 
-%     MICCAI 2013: Workshop on Medical Computer Vision. 
-
-clear;clc;close all;
+clear; clc; close all;
 
 %% compile C++ code
 
@@ -38,13 +38,13 @@ mex RunDecisionTree.cpp;
 
 load TrainingData.mat;
 
-depth=5; % tree depth
-noc=1000; % number of candidates at each tree node
-treeFile='tree.txt'; % tree file name
+depth = 5;       % tree depth
+noc = 1000;      % number of candidates at each tree node
+treeFile = 'tree.txt'; % tree file name
 
 tic;
-TrainDecisionTree(X,Y+1,treeFile,depth,noc);
-t1=toc;
+TrainDecisionTree(X, Y+1, treeFile, depth, noc);
+t1 = toc;
 
 fprintf('Training decision tree of depth %d completed, using time %f seconds \n',depth,t1);
 
@@ -56,10 +56,10 @@ tic;
 [Y1,P]=RunDecisionTree(X,treeFile);
 t2=toc;
 
-Y1=Y1-1;
+Y1 = Y1 - 1;
 
-error=sum(Y1~=Y);
-accuracy=1-error/length(Y);
+error = sum(Y1 ~= Y);
+accuracy = 1 - error / length(Y);
 
 fprintf('Testing decision tree of depth %d completed, using time %f seconds \n',depth,t2);
 fprintf('Decision tree classification accuracy: %f \n\n',accuracy);
@@ -70,14 +70,14 @@ clear;
 
 load TrainingData.mat;
 
-depth=5; % tree depth
-noc=1000; % number of candidates at each tree node
-forestSize=10; % how many trees does the forest contain
-forestPath='forest'; % forest directory name
+depth = 5;       % tree depth
+noc = 1000;      % number of candidates at each tree node
+forestSize = 10; % how many trees does the forest contain
+forestPath = 'forest'; % forest directory name
 
 tic;
-TrainDecisionForest(X,Y+1,forestPath,forestSize,depth,noc);
-t3=toc;
+TrainDecisionForest(X, Y+1, forestPath, forestSize, depth, noc);
+t3 = toc;
 
 fprintf('Training decision forest of size %d completed, using time %f seconds \n',forestSize,t3);
 
@@ -86,13 +86,13 @@ fprintf('Training decision forest of size %d completed, using time %f seconds \n
 load TestingData.mat;
 
 tic;
-[Y1,P]=RunDecisionForest(X,forestPath);
-t4=toc;
+[Y1, P] = RunDecisionForest(X, forestPath);
+t4 = toc;
 
-Y1=Y1-1;
+Y1 = Y1 - 1;
 
-error=sum(Y1~=Y);
-accuracy=1-error/length(Y);
+error = sum(Y1 ~= Y);
+accuracy = 1 - error / length(Y);
 
 fprintf('Testing decision forest of size %d completed, using time %f seconds \n',forestSize,t4);
 fprintf('Decision forest classification accuracy: %f \n\n',accuracy);

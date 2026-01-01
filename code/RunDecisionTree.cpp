@@ -34,13 +34,13 @@ void mexFunction(int nlhs, mxArray *plhs[],
     if (nrhs != 2)
     {
         mexErrMsgIdAndTxt(
-            "MATLAB:TrainDecisionTree:invalidNumInputs",
+            "MATLAB:RunDecisionTree:invalidNumInputs",
             "Two inputs required.");
     }
     if (nlhs > 2)
     {
         mexErrMsgIdAndTxt(
-            "MATLAB:TrainDecisionTree:invalidNumOutputs",
+            "MATLAB:RunDecisionTree:invalidNumOutputs",
             "At most two outputs.");
     }
 

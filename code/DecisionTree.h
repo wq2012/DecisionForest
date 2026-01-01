@@ -1,11 +1,14 @@
 /**
+ * @file DecisionTree.h
+ * @brief C++ implementation of the decision tree data structure.
+ * @author Quan Wang <wangq10@rpi.edu>
+ * @date 2013
+ * 
  * Copyright (C) 2013 Quan Wang <wangq10@rpi.edu>,
  * Signal Analysis and Machine Perception Laboratory,
  * Department of Electrical, Computer, and Systems Engineering,
  * Rensselaer Polytechnic Institute, Troy, NY 12180, USA
- */
-
-/**
+ *
  * Related publications:
  * [1] Quan Wang, Yan Ou, A. Agung Julius, Kim L. Boyer and Min Jun Kim,
  *     "Tracking Tetrahymena Pyriformis Cells using Decision Trees",
@@ -18,12 +21,14 @@
  */
 
 /**
- * This is the C++ implementation of the decision tree data structure.
- * Implemented classes:
- *     1. Data: to hold the training data.
- *     2. List: to hold the list of indices of data instances.
- *     3. TreeNode: to represent a node of the tree.
- *     4. Tree: to represent the decision tree.
+ * @class Data
+ * @brief Class to hold the training data.
+ * @class List
+ * @brief Class to hold the list of indices of data instances.
+ * @class TreeNode
+ * @brief Class to represent a node of the tree.
+ * @class Tree
+ * @brief Class to represent the decision tree.
  *
  * The connection between Tree and TreeNode is that there is a hash table
  * in Tree, which maps a node index to a TreeNode:
@@ -52,16 +57,34 @@
 class Data
 {
 public:
-    double *X;
-    int *Y;
-    long n;       // number of instances
-    long d;       // dimension of each instance
-    int nol;      // number of unique labels
-    double *mean; // mean value of each dimension
-    double *std;  // standard deviation of each dimension
+    double *X;    ///< Feature matrix
+    int *Y;       ///< Label vector
+    long n;       ///< Number of instances
+    long d;       ///< Dimension of each instance
+    int nol;      ///< Number of unique labels
+    double *mean; ///< Mean value of each dimension
+    double *std;  ///< Standard deviation of each dimension
 
+    /**
+     * @brief Constructor.
+     * @param X_ Feature matrix.
+     * @param Y_ Label vector.
+     * @param n_ Number of instances.
+     * @param d_ Dimension of each instance.
+     */
     Data(double *X_, int *Y_, long n_, long d_);
+
+    /**
+     * @brief Destructor.
+     */
     ~Data();
+
+    /**
+     * @brief Get feature value.
+     * @param i Instance index.
+     * @param feature Feature index.
+     * @return Value of the feature.
+     */
     double getFeature(long i, long feature);
 };
 
@@ -117,7 +140,7 @@ public:
     bool pureList(List *list, Data *data); // check if a list contains only one kind of label
 
     TreeNode *decideTree(long n, double *feature);                     // make decisions given one instance (recursive)
-    void runDecision(double *X, double *Y, double *P, long n, long d); // make decisions given tesing data
+    void runDecision(double *X, double *Y, double *P, long n, long d); // make decisions given testing data
 };
 
 /**********************************************
