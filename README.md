@@ -13,6 +13,7 @@
   - [Testing a Decision Tree](#testing-a-decision-tree)
   - [Training a Decision Forest](#training-a-decision-forest)
   - [Testing a Decision Forest](#testing-a-decision-forest)
+- [Tree File Format](#tree-file-format)
 - [Copyright and Citation](#copyright-and-citation)
 
 ## Overview
@@ -20,6 +21,8 @@
 This package implements **Decision Tree** and **Decision Forest** (Random Forest) techniques in C++, optimized for efficiency. It provides a MEX interface to be easily called from **MATLAB** or **Octave**.
 
 The algorithm is based on standard information gain principles and has been utilized in multiple research publications.
+
+![picture](resources/decision_forest.png)
 
 ## Features
 
@@ -81,6 +84,51 @@ To test a decision forest:
 
 [Y_pred, P] = RunDecisionForest(X, forestPath);
 ```
+
+## Tree File Format
+
+The decision trees are saved as text files (e.g., `tree.txt`). Each file describes the structure and parameters of a trained tree.
+
+### Header Line
+The first line contains four numbers separated by tabs:
+`depth` `d` `nol` `num_nodes`
+
+- `depth`: Maximum depth of the tree.
+- `d`: Dimensionality of the feature space.
+- `nol`: Number of unique labels (classes).
+- `num_nodes`: Total number of nodes in the saved tree.
+
+### Node Lines
+Each subsequent line represents a single node in the tree and contains tab-separated values. The format depends on whether the node is an internal node or a leaf node.
+
+**Format**:
+`node_index` `feature_index` `threshold` [`probabilities`]
+
+- `node_index`: Integer index of the node.
+    - Root node is index `0`.
+    - For a node `n`, its left child is `2*n + 1` and right child is `2*n + 2`.
+- `feature_index`: The feature dimension used for splitting (0-based index).
+    - If `feature_index` is `-1`, the node is a **Leaf Node**.
+    - If `feature_index` >= 0, the node is an **Internal Node** (Split Node).
+- `threshold`: The threshold value for the split.
+    - If feature value <= threshold, go to left child.
+    - Otherwise, go to right child.
+- `probabilities` (Leaf Nodes only): A sequence of `nol` floating-point numbers representing the unnormalized counts (or probabilities) for each class at this leaf.
+
+**Example**:
+```
+5	4	3	7
+0	2	1.500000	
+1	0	0.800000	
+2	-1	0.000000	10.000000	5.000000	2.000000	
+3	-1	0.000000	20.000000	0.000000	1.000000	
+4	-1	0.000000	8.000000	5.000000	0.000000	
+...
+```
+*Explanation of example*:
+- Header: depth 5, 4 dimensions, 3 classes, 7 nodes.
+- Node 0: Splits on feature 2 with threshold 1.5.
+- Node 2: Leaf node. Class counts are [10, 5, 2] for classes 1, 2, and 3 respectively.
 
 ## Copyright and Citation
 
