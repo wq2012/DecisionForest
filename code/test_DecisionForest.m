@@ -26,6 +26,7 @@ function test_DecisionForest()
     noc = 1000;
     treeFile = 'test_tree.txt';
     
+    % Test w/o importance
     TrainDecisionTree(X, Y+1, treeFile, depth, noc);
     
     if ~exist(treeFile, 'file')
@@ -40,19 +41,19 @@ function test_DecisionForest()
     accuracy = 1 - error_count / length(Y);
     
     fprintf('Decision Tree Accuracy: %.4f\n', accuracy);
-    
-    % Assert accuracy is reasonable (e.g., > 80%)
-    % Note: Accuracy might vary slightly due to randomness in training,
-    % but for this dataset it should be high.
     assert(accuracy > 0.8, 'Decision Tree accuracy is too low.');
     
-    % Clean up
+    % Test w/ importance (optional output)
+    imp = TrainDecisionTree(X, Y+1, treeFile, depth, noc);
+    assert(length(imp) == size(X, 2), 'Importance vector size mismatch');
+    fprintf('Feature importance calculated.\n');
+    
     delete(treeFile);
     
     % ------------------------
     % Test 2: Decision Forest
     % ------------------------
-    fprintf('Test 2: Decision Forest...\n');
+    fprintf('\nTest 2: Decision Forest...\n');
     load('TrainingData.mat');
     
     forestSize = 5;
@@ -64,10 +65,6 @@ function test_DecisionForest()
     
     TrainDecisionForest(X, Y+1, forestPath, forestSize, depth, noc);
     
-    if ~exist(forestPath, 'dir')
-        error('Forest directory was not created.');
-    end
-    
     load('TestingData.mat');
     [Y1, ~] = RunDecisionForest(X, forestPath);
     Y1 = Y1 - 1;
@@ -76,11 +73,37 @@ function test_DecisionForest()
     accuracy = 1 - error_count / length(Y);
     
     fprintf('Decision Forest Accuracy: %.4f\n', accuracy);
-    
     assert(accuracy > 0.85, 'Decision Forest accuracy is too low.');
     
-    % Clean up
+    rmdir(forestPath, 's');
+
+    % ------------------------
+    % Test 3: AdaBoost
+    % ------------------------
+    fprintf('\nTest 3: AdaBoost...\n');
+    load('TrainingData.mat');
+    
+    forestPath = 'test_adaboost';
+    if exist(forestPath, 'dir')
+        rmdir(forestPath, 's');
+    end
+    
+    [weights, importance] = TrainAdaBoost(X, Y+1, forestPath, forestSize, depth, noc);
+    
+    assert(length(weights) == forestSize, 'Weights vector size mismatch');
+    assert(length(importance) == size(X, 2), 'Importance vector size mismatch');
+    
+    load('TestingData.mat');
+    [Y1, ~] = RunAdaBoost(X, forestPath);
+    Y1 = Y1 - 1;
+    
+    error_count = sum(Y1 ~= Y);
+    accuracy = 1 - error_count / length(Y);
+    
+    fprintf('AdaBoost Accuracy: %.4f\n', accuracy);
+    assert(accuracy > 0.85, 'AdaBoost accuracy is too low.');
+    
     rmdir(forestPath, 's');
     
-    fprintf('All tests passed!\n');
+    fprintf('\nAll tests passed!\n');
 end

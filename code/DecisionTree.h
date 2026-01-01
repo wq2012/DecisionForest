@@ -18,6 +18,9 @@
  *     Kevin Zhou, "Semantic Context Forests for Learning-Based Knee
  *     Cartilage Segmentation in 3D MR Images",
  *     MICCAI 2013: Workshop on Medical Computer Vision.
+ * [3] Quan Wang. "Exploiting Geometric and Spatial Constraints for Vision
+ *     and Lighting Applications".
+ *     Ph.D. dissertation, Rensselaer Polytechnic Institute, 2014.
  */
 
 /**
@@ -59,6 +62,7 @@ class Data
 public:
     double *X;    ///< Feature matrix
     int *Y;       ///< Label vector
+    double *W;    ///< Weight vector (new)
     long n;       ///< Number of instances
     long d;       ///< Dimension of each instance
     int nol;      ///< Number of unique labels
@@ -72,7 +76,7 @@ public:
      * @param n_ Number of instances.
      * @param d_ Dimension of each instance.
      */
-    Data(double *X_, int *Y_, long n_, long d_);
+    Data(double *X_, int *Y_, long n_, long d_, double *W_ = NULL);
 
     /**
      * @brief Destructor.
@@ -138,6 +142,8 @@ public:
     void trainTreeNode(long n, List *list, Data *data); // train one node (recursive)
     double getEntropyDecrease(Data *data, TreeNode node, List *list);
     bool pureList(List *list, Data *data); // check if a list contains only one kind of label
+    double *importance; // feature importance
+    double *getImportance();
 
     TreeNode *decideTree(long n, double *feature);                     // make decisions given one instance (recursive)
     void runDecision(double *X, double *Y, double *P, long n, long d); // make decisions given testing data
@@ -147,12 +153,13 @@ public:
  * Implementation part
  **********************************************/
 
-Data::Data(double *X_, int *Y_, long n_, long d_)
+Data::Data(double *X_, int *Y_, long n_, long d_, double *W_)
 {
     X = X_;
     Y = Y_;
     n = n_;
     d = d_;
+    W = W_;
 
     mean = new double[d];
     std = new double[d];
@@ -259,6 +266,8 @@ Tree::Tree(int depth_, long noc_)
 
     depth = depth_;
     noc = noc_;
+    
+    importance = NULL;
 }
 
 Tree::Tree(char *path)
@@ -285,6 +294,9 @@ Tree::Tree(char *path)
     depth = atoi(word); // depth of tree
     word = strtok(NULL, "\t\r\n");
     d = atoi(word); // dimension of instances
+    importance = new double[d]; // Initialize importance even when loading
+    for (int i = 0; i < d; i++) importance[i] = 0;
+
     word = strtok(NULL, "\t\r\n");
     nol = atoi(word); // number of unique labels
     word = strtok(NULL, "\t\r\n");
@@ -327,6 +339,7 @@ Tree::Tree(char *path)
 Tree::~Tree()
 {
     delete map;
+    if (importance != NULL) delete[] importance;
 }
 
 long Tree::leftChild(long n)
@@ -375,6 +388,11 @@ void Tree::trainTree(Data *data)
 {
     d = data->d;
     nol = data->nol;
+    
+    if (importance != NULL) delete[] importance;
+    importance = new double[d];
+    for (int i = 0; i < d; i++) importance[i] = 0;
+
     List *list = new List(data->n);
     for (long i = 0; i < data->n; i++)
     {
@@ -402,7 +420,8 @@ void Tree::trainTreeNode(long n, List *list, Data *data)
 
         for (long i = 0; i < list->num; i++)
         {
-            node->param[data->Y[list->list[i]] - 1]++;
+            double weight = (data->W == NULL) ? 1.0 : data->W[list->list[i]];
+            node->param[data->Y[list->list[i]] - 1] += weight;
         }
         map->add(n, node);
         return;
@@ -424,6 +443,11 @@ void Tree::trainTreeNode(long n, List *list, Data *data)
             bestNode = &candidates[i];
             largestEntropyDecrease = entropyDecrease[i];
         }
+    }
+    
+    // Update importance
+    if (bestNode->feature >= 0 && bestNode->feature < d) {
+        importance[bestNode->feature] += largestEntropyDecrease * list->num; // Approximation: entropy decrease * samples
     }
 
     map->add(n, new TreeNode(bestNode->feature, bestNode->threshold, nol));
@@ -469,8 +493,8 @@ double Tree::getEntropyDecrease(Data *data, TreeNode node, List *list)
     double entropyDecrease = 0;
     double leftEntropy = 0;
     double rightEntropy = 0;
-    long leftSize = 0;
-    long rightSize = 0;
+    double leftWeight = 0;
+    double rightWeight = 0;
 
     double *leftLabel = new double[nol];
     double *rightLabel = new double[nol];
@@ -484,24 +508,26 @@ double Tree::getEntropyDecrease(Data *data, TreeNode node, List *list)
     for (long i = 0; i < list->num; i++)
     {
         feature = data->getFeature(list->list[i], node.feature);
+        double w = (data->W == NULL) ? 1.0 : data->W[list->list[i]];
+        
         if (feature <= node.threshold)
         {
-            leftSize++;
-            leftLabel[data->Y[list->list[i]] - 1]++;
+            leftWeight += w;
+            leftLabel[data->Y[list->list[i]] - 1] += w;
         }
         else
         {
-            rightSize++;
-            rightLabel[data->Y[list->list[i]] - 1]++;
+            rightWeight += w;
+            rightLabel[data->Y[list->list[i]] - 1] += w;
         }
     }
 
     // get left entropy
-    if (leftSize > eps)
+    if (leftWeight > eps)
     {
         for (int i = 0; i < nol; i++)
         {
-            leftLabel[i] /= (double)leftSize;
+            leftLabel[i] /= leftWeight;
             if (leftLabel[i] > eps)
             {
                 leftEntropy -= leftLabel[i] * log(leftLabel[i]);
@@ -510,11 +536,11 @@ double Tree::getEntropyDecrease(Data *data, TreeNode node, List *list)
     }
 
     // get right entropy
-    if (rightSize > eps)
+    if (rightWeight > eps)
     {
         for (int i = 0; i < nol; i++)
         {
-            rightLabel[i] /= (double)rightSize;
+            rightLabel[i] /= rightWeight;
             if (rightLabel[i] > eps)
             {
                 rightEntropy -= rightLabel[i] * log(rightLabel[i]);
@@ -523,7 +549,8 @@ double Tree::getEntropyDecrease(Data *data, TreeNode node, List *list)
     }
 
     // get entropy decrease
-    entropyDecrease = -(double)leftSize / list->num * (leftEntropy) - (double)rightSize / list->num * (rightEntropy);
+    double totalWeight = leftWeight + rightWeight;
+    entropyDecrease = -(double)leftWeight / totalWeight * (leftEntropy) - (double)rightWeight / totalWeight * (rightEntropy);
 
     delete[] leftLabel;
     delete[] rightLabel;
@@ -641,6 +668,11 @@ void Tree::runDecision(double *X, double *Y, double *P, long n_, long d_)
         }
     }
     delete[] feature;
+}
+
+double *Tree::getImportance()
+{
+    return importance;
 }
 
 #endif

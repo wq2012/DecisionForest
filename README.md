@@ -13,6 +13,8 @@
   - [Testing a Decision Tree](#testing-a-decision-tree)
   - [Training a Decision Forest](#training-a-decision-forest)
   - [Testing a Decision Forest](#testing-a-decision-forest)
+  - [AdaBoost](#adaboost)
+  - [Feature Importance](#feature-importance)
 - [Tree File Format](#tree-file-format)
 - [Copyright and Citation](#copyright-and-citation)
 
@@ -54,7 +56,10 @@ To train a single decision tree:
 % depth: maximum depth of the tree
 % noc: number of candidates to split at each node
 
-TrainDecisionTree(X, Y, treeFile, depth, noc);
+% W: (Optional) n x 1 weights for each instance. Default is uniform.
+% importance: (Optional) d x 1 vector of feature importance.
+
+importance = TrainDecisionTree(X, Y, treeFile, depth, noc, W);
 ```
 
 ### Testing a Decision Tree
@@ -84,6 +89,45 @@ To test a decision forest:
 
 [Y_pred, P] = RunDecisionForest(X, forestPath);
 ```
+
+### AdaBoost
+
+**AdaBoost** (Adaptive Boosting) is an ensemble learning method that can be used in conjunction with many other types of learning algorithms to improve performance. The output of the other learning algorithms ('weak learners') is combined into a weighted sum that represents the final output of the boosted classifier.
+
+In this library, we implement **Multi-class AdaBoost (SAMME)**, where the weak learner is a **Decision Tree**.
+
+#### Relationship with Decision Trees and Forests
+-   **Decision Tree**: A single tree is trained on the data.
+-   **Decision Forest (Random Forest)**: Multiple trees are trained independently on identifying subsets of data/features. They vote equally (or by averaging probabilities) for the final prediction.
+-   **AdaBoost**: Trees are trained **sequentially**. After each tree is trained, the algorithm increases the weights of the misclassified instances. The next tree is then forced to focus on the hard-to-classify examples.
+    -   Unlike Random Forest, where trees are independent, in AdaBoost, the training of the $(i+1)$-th tree depends on the $i$-th tree.
+    -   Unlike Random Forest, where trees serve as equal voters, in AdaBoost, each tree is assigned a voting weight $\alpha$ based on its accuracy.
+
+#### How It Works
+1.  **Initialization**: All training instances are assigned equal weights $W = 1/N$.
+2.  **Iterative Training**: For each iteration $m = 1 \dots M$:
+    -   A **Decision Tree** is trained using the weighted data. The internal C++ core (`TrainDecisionTree`) has been updated to handle these instance weights, modifying the entropy calculation to account for the importance of each sample.
+    -   The weighted error rate of the tree is calculated.
+    -   A voting weight $\alpha_m$ is computed for the tree based on its error (lower error $\to$ higher $\alpha$).
+    -   The instance weights $W$ are updated: weights of misclassified instances are increased.
+3.  **Final Prediction**: The ensemble makes predictions by taking a weighted vote of the individual trees using their $\alpha$ values.
+
+**Training**:
+```matlab
+% weights: Weights of weak classifiers (alpha)
+% importance: Aggregated feature importance
+
+[weights, importance] = TrainAdaBoost(X, Y, forestPath, forestSize, depth, noc);
+```
+
+**Testing**:
+```matlab
+[Y_pred, P] = RunAdaBoost(X, forestPath);
+```
+
+### Feature Importance
+Both `TrainDecisionTree` and `TrainAdaBoost` return a feature importance vector. 
+The importance of a feature is calculated based on the total entropy decrease (information gain) attributed to that feature during the training process.
 
 ## Tree File Format
 

@@ -22,6 +22,19 @@ function TrainDecisionForest(X, Y, forestPath, forestSize, depth, noc)
 %   Signal Analysis and Machine Perception Laboratory
 %   Department of Electrical, Computer, and Systems Engineering
 %   Rensselaer Polytechnic Institute, Troy, NY 12180, USA
+%
+%   Related publications:
+%   [1] Quan Wang, Yan Ou, A. Agung Julius, Kim L. Boyer and Min Jun Kim, 
+%       "Tracking Tetrahymena Pyriformis Cells using Decision Trees", 
+%       2012 21st International Conference on Pattern Recognition (ICPR), 
+%       Pages 1843-1847, 11-15 Nov. 2012.
+%   [2] Quan Wang, Dijia Wu, Le Lu, Meizhu Liu, Kim L. Boyer, and Shaohua 
+%       Kevin Zhou, "Semantic Context Forests for Learning-Based Knee 
+%       Cartilage Segmentation in 3D MR Images", 
+%       MICCAI 2013: Workshop on Medical Computer Vision.
+%   [3] Quan Wang. "Exploiting Geometric and Spatial Constraints for Vision
+%       and Lighting Applications".
+%       Ph.D. dissertation, Rensselaer Polytechnic Institute, 2014.
 
 if exist(forestPath, 'dir') ~= 7
     mkdir(forestPath);

@@ -25,7 +25,10 @@
 %   [2] Quan Wang, Dijia Wu, Le Lu, Meizhu Liu, Kim L. Boyer, and Shaohua 
 %       Kevin Zhou, "Semantic Context Forests for Learning-Based Knee 
 %       Cartilage Segmentation in 3D MR Images", 
-%       MICCAI 2013: Workshop on Medical Computer Vision. 
+%       MICCAI 2013: Workshop on Medical Computer Vision.
+%   [3] Quan Wang. "Exploiting Geometric and Spatial Constraints for Vision
+%       and Lighting Applications".
+%       Ph.D. dissertation, Rensselaer Polytechnic Institute, 2014. 
 
 clear; clc; close all;
 

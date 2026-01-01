@@ -1,16 +1,36 @@
 /**
  * This is the C/MEX code for training a decision tree
  *
+ * Copyright (C) 2013 Quan Wang <wangq10@rpi.edu>,
+ * Signal Analysis and Machine Perception Laboratory,
+ * Department of Electrical, Computer, and Systems Engineering,
+ * Rensselaer Polytechnic Institute, Troy, NY 12180, USA
+ *
+ * Related publications:
+ * [1] Quan Wang, Yan Ou, A. Agung Julius, Kim L. Boyer and Min Jun Kim,
+ *     "Tracking Tetrahymena Pyriformis Cells using Decision Trees",
+ *     2012 21st International Conference on Pattern Recognition (ICPR),
+ *     Pages 1843-1847, 11-15 Nov. 2012.
+ * [2] Quan Wang, Dijia Wu, Le Lu, Meizhu Liu, Kim L. Boyer, and Shaohua
+ *     Kevin Zhou, "Semantic Context Forests for Learning-Based Knee
+ *     Cartilage Segmentation in 3D MR Images",
+ *     MICCAI 2013: Workshop on Medical Computer Vision.
+ * [3] Quan Wang. "Exploiting Geometric and Spatial Constraints for Vision
+ *     and Lighting Applications".
+ *     Ph.D. dissertation, Rensselaer Polytechnic Institute, 2014.
+ *
  * compile:
  *     mex TrainDecisionTree.cpp
  *
  * usage:
- *     TrainDecisionTree(X,Y,path,depth,noc)
+ *     importance = TrainDecisionTree(X,Y,path,depth,noc,W)
  *       X: n*d training data, each row is one instance, double
  *       Y: n*1 labels, each row is one instance, each number is an integer between 1 and nol
  *       path: the file path of the resulting tree
  *       depth: the maximum depth of the tree
  *       noc: number of candidates at each node
+ *       W (optional): n*1 weights, each row is one instance, double
+ *       importance (optional): d*1 vector of feature importance
  */
 
 #include "mex.h"
@@ -28,6 +48,8 @@ void mexFunction(
     double *X;
     int *Y;
     double *Y1;
+    double *W = NULL;
+    double *importance;
     long n;    // number of instances
     long d;    // dimension of features
     int depth; // the maximum depth of the tree
@@ -35,17 +57,17 @@ void mexFunction(
     char *path;
 
     /*  check for proper number of arguments */
-    if (nrhs != 5)
+    if (nrhs < 5 || nrhs > 6)
     {
         mexErrMsgIdAndTxt(
             "MATLAB:TrainDecisionTree:invalidNumInputs",
-            "Five inputs required.");
+            "Five or six inputs required.");
     }
-    if (nlhs > 0)
+    if (nlhs > 1)
     {
         mexErrMsgIdAndTxt(
             "MATLAB:TrainDecisionTree:invalidNumOutputs",
-            "Zero output required.");
+            "At most one output.");
     }
 
     /*  get X */
@@ -106,11 +128,33 @@ void mexFunction(
             "Input noc must be larger than 0.");
     }
 
+    /*  get W */
+    if (nrhs == 6)
+    {
+        W = mxGetPr(prhs[5]);
+        if (mxGetM(prhs[5]) != n || mxGetN(prhs[5]) != 1)
+        {
+            mexErrMsgIdAndTxt(
+                "MATLAB:TrainDecisionTree:dimNotMatch",
+                "Dimension of input W is incorrect");
+        }
+    }
+
     /*  call the C++ subroutine */
-    Data *data = new Data(X, Y, n, d);
+    Data *data = new Data(X, Y, n, d, W);
     Tree *tree = new Tree(depth, noc);
     tree->trainTree(data);
     tree->saveTree(path);
+
+    /*  return importance */
+    if (nlhs >= 1) {
+        plhs[0] = mxCreateDoubleMatrix(d, 1, mxREAL);
+        importance = mxGetPr(plhs[0]);
+        double *treeImportance = tree->getImportance();
+        for (long i = 0; i < d; i++) {
+            importance[i] = treeImportance[i];
+        }
+    }
 
     delete data;
     delete tree;
