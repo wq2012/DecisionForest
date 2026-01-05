@@ -2,6 +2,10 @@
 
 [![View Decision Tree and Decision Forest on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/39110-decision-tree-and-decision-forest)
 [![Octave application](https://github.com/wq2012/DecisionForest/actions/workflows/octave.yml/badge.svg)](https://github.com/wq2012/DecisionForest/actions/workflows/octave.yml)
+[![Python Tests](https://github.com/wq2012/DecisionForest/actions/workflows/python.yml/badge.svg)](https://github.com/wq2012/DecisionForest/actions/workflows/python.yml)
+[![PyPI Version](https://img.shields.io/pypi/v/pydecisionforest.svg)](https://pypi.python.org/pypi/pydecisionforest)
+[![Python Versions](https://img.shields.io/pypi/pyversions/pydecisionforest.svg)](https://pypi.org/project/pydecisionforest)
+[![Downloads](https://static.pepy.tech/badge/pydecisionforest)](https://pepy.tech/project/pydecisionforest)
 
 ## Table of Contents
 - [Overview](#overview)
@@ -239,7 +243,7 @@ The Python implementation is designed to be:
 ## Copyright and Citation
 
 ```
-Copyright (C) 2012 Quan Wang <wangq10@rpi.edu>,
+Copyright (C) 2013 Quan Wang <wangq10@rpi.edu>,
 Signal Analysis and Machine Perception Laboratory,
 Department of Electrical, Computer, and Systems Engineering,
 Rensselaer Polytechnic Institute, Troy, NY 12180, USA
