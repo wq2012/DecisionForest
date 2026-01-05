@@ -22,14 +22,14 @@
   - [Feature Importance](#feature-importance)
 - [Tree File Format](#tree-file-format)
 - [Python Package](#python-package)
+  - [Design](#design)
   - [Installation](#installation)
   - [Usage](#usage-1)
-  - [Design](#design)
 - [Copyright and Citation](#copyright-and-citation)
 
 ## Overview
 
-This package implements **Decision Tree** and **Decision Forest** (Random Forest) techniques in C++, optimized for efficiency. It provides a MEX interface to be easily called from **MATLAB** or **Octave**.
+This package implements **Decision Tree** and **Decision Forest** (Random Forest) techniques in C++, optimized for efficiency. It provides a MEX interface to be easily called from **MATLAB** or **Octave**. Also, it provides a pure Python implementation for easy integration into other Python projects.
 
 The algorithm is based on standard information gain principles and has been utilized in multiple research publications.
 
@@ -203,6 +203,12 @@ Each subsequent line represents a single node in the tree and contains tab-separ
 
 We also provide a pure Python implementation of all algorithms.
 
+### Design
+The Python implementation is designed to be:
+-   **Pure Python**: Easy to install and debug, with `numpy` as the only dependency.
+-   **Vectorized**: Critical paths like entropy calculation are vectorized using NumPy to ensure reasonable performance.
+-   **Consistent**: The API and logic mirror the C++/MATLAB implementation, ensuring consistent results across platforms.
+
 ### Installation
 ```bash
 pip install pydecisionforest
@@ -233,12 +239,6 @@ Y_pred = model.predict(X_test)
 ```
 
 The Python API offers a class-based interface (`DecisionTree`, `DecisionForest`, `AdaBoost`) with `fit`, `predict`, `save`, and `load` methods.
-
-### Design
-The Python implementation is designed to be:
--   **Pure Python**: Easy to install and debug, with `numpy` as the only dependency.
--   **Vectorized**: Critical paths like entropy calculation are vectorized using NumPy to ensure reasonable performance.
--   **Consistent**: The API and logic mirror the C++/MATLAB implementation, ensuring consistent results across platforms.
 
 ## Copyright and Citation
 
