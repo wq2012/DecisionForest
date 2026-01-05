@@ -6,6 +6,7 @@
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
+- [File Structure](#file-structure)
 - [Usage](#usage)
   - [Prerequisites](#prerequisites)
   - [Compiling](#compiling)
@@ -16,6 +17,10 @@
   - [AdaBoost](#adaboost)
   - [Feature Importance](#feature-importance)
 - [Tree File Format](#tree-file-format)
+- [Python Package](#python-package)
+  - [Installation](#installation)
+  - [Usage](#usage-1)
+  - [Design](#design)
 - [Copyright and Citation](#copyright-and-citation)
 
 ## Overview
@@ -33,6 +38,18 @@ The algorithm is based on standard information gain principles and has been util
 - **Decision Tree**: Train and test single decision trees.
 - **Decision Forest**: Train and test ensembles of trees (Random Forest) for improved robustness and accuracy.
 - **Cross-Platform**: Tested on Windows, Mac OS, and Linux.
+
+## File Structure
+
+-   `code/`: C++ core implementation and MATLAB/Octave wrappers.
+    -   `DecisionTree.h`, `HashTable.h`: Core data structures and algorithms.
+    -   `TrainDecisionTree.cpp`, `RunDecisionTree.cpp`: MEX interfaces.
+    -   `*.m`: MATLAB/Octave scripts.
+-   `python/`: Pure Python implementation.
+    -   `decision_forest/`: Python package source.
+    -   `tests/`: Unit tests.
+-   `setup.py`: Python packaging configuration.
+-   `documentation`: Relevant papers, posters, and slides.
 
 ## Usage
 
@@ -131,6 +148,9 @@ The importance of a feature is calculated based on the total entropy decrease (i
 
 ## Tree File Format
 
+> [!NOTE]
+> This section describes the text-based file format used by the **C++/MATLAB** implementation. The Python implementation uses standard python objects and can be serialized using `pickle` or `joblib`.
+
 The decision trees are saved as text files (e.g., `tree.txt`). Each file describes the structure and parameters of a trained tree.
 
 ### Header Line
@@ -173,6 +193,48 @@ Each subsequent line represents a single node in the tree and contains tab-separ
 - Header: depth 5, 4 dimensions, 3 classes, 7 nodes.
 - Node 0: Splits on feature 2 with threshold 1.5.
 - Node 2: Leaf node. Class counts are [10, 5, 2] for classes 1, 2, and 3 respectively.
+
+
+## Python Package
+
+We also provide a pure Python implementation of all algorithms.
+
+### Installation
+```bash
+pip install pydecisionforest
+```
+Or install from source:
+```bash
+pip install .
+```
+
+### Usage
+```python
+from pydecisionforest import train_decision_forest, run_decision_forest, train_adaboost, run_adaboost
+
+# Train Forest
+forest = train_decision_forest(X_train, Y_train, forest_size=10, depth=5, noc=100)
+
+# Save/Load Model
+forest.save("model.pkl")
+loaded_forest = forest.load("model.pkl")
+
+# Predict
+Y_pred = loaded_forest.predict(X_test)
+
+# Train AdaBoost
+weights, importance, model = train_adaboost(X_train, Y_train, forest_size=10, depth=5, noc=100)
+model.save("adaboost.pkl")
+Y_pred = model.predict(X_test)
+```
+
+The Python API offers a class-based interface (`DecisionTree`, `DecisionForest`, `AdaBoost`) with `fit`, `predict`, `save`, and `load` methods.
+
+### Design
+The Python implementation is designed to be:
+-   **Pure Python**: Easy to install and debug, with `numpy` as the only dependency.
+-   **Vectorized**: Critical paths like entropy calculation are vectorized using NumPy to ensure reasonable performance.
+-   **Consistent**: The API and logic mirror the C++/MATLAB implementation, ensuring consistent results across platforms.
 
 ## Copyright and Citation
 

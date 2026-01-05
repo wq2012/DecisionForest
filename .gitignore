@@ -1,3 +1,6 @@
 *.tree
 *.mex
 tree.txt
+*.pyc
+dist/*
+*egg-info*
