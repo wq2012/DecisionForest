@@ -4,6 +4,8 @@
 # Ensure twine and build are installed
 pip install twine build
 
+rm -rf dist
+
 # Build the package
 python -m build
 
